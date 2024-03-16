@@ -1,7 +1,7 @@
 #!/bin/zsh
 # pull source tvbox txt
 sourceGitDir="~/project/tvbox"
-destGitDir="~/project/myiptve"
+destGitDir="~/project/myiptv"
 cd $sourceGitDir
 git pull
 
