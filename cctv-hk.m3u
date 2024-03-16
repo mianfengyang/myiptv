@@ -1,7 +1,6 @@
 #EXTM3U
 #EXTINF:-1 group-title="央视频道",CCTV13
-#https://live-play.cctvnews.cctv.com/cctv/merge_cctv13.m3u8?auth_key=357606504
-https://ldncctvwbcdali.v.myalicdn.com/ldncctvwbcd/cdrmldcctv13_1td.m3u8
+https://live-play.cctvnews.cctv.com/cctv/merge_cctv13.m3u8?auth_key=357606504
 #EXTINF:-1 group-title="港澳台",香港卫视
 http://zhibo.hkstv.tv/livestream/mutfysrq/playlist.m3u8
 #EXTINF:-1 group-title="港澳台",澳门卫视
