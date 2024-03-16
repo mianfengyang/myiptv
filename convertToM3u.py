@@ -20,7 +20,7 @@ class Convert:
                     title = line.split(',')[0]
                     titleUrl = line.split(',')[1]
                 buf = self.pretext + '"' + groupTitle + '"' + "," + title + "\n" + titleUrl
-                print(buf)
+                #print(buf)
                 fw.write(buf)
 
 if __name__ == '__main__':
