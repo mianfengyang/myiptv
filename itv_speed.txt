@@ -1,0 +1,6 @@
+CCTV5+,http://219.145.20.108:3528/tsfile/live/0136_1.m3u8?key=txiptv&playlive=1&authid=0
+广东体育,http://116.21.120.40:4433/tsfile/live/0142_1.m3u8?key=txiptv&playlive=1&authid=0
+广东卫视,http://116.21.120.40:4433/tsfile/live/0125_1.m3u8?key=txiptv&playlive=1&authid=0
+江苏卫视,http://116.21.120.40:4433/tsfile/live/0127_1.m3u8?key=txiptv&playlive=1&authid=0
+浙江卫视,http://116.21.120.40:4433/tsfile/live/0124_1.m3u8?key=txiptv&playlive=1&authid=0
+湖南卫视,http://116.21.120.40:4433/tsfile/live/0128_1.m3u8?key=txiptv&playlive=1&authid=0
