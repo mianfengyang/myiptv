@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 import requests
 import re
 import os
+import subprocess
 import threading
 from queue import Queue
 
@@ -191,10 +192,12 @@ for result in results:
     if result:
         channel_name, channel_url = result.split(',')
         channels.append((channel_name, channel_url))
+
 with open("itv_source.txt", 'w', encoding='utf-8') as file:
     for result in channels:
         channel_name, channel_url = result
         file.write(f"{channel_name},{channel_url}\n")
+
 
 import trio
 import eventlet
@@ -224,7 +227,7 @@ def worker():
                 file_size = 0
                 start_time = time.time()
                 # 多获取的视频数据进行12秒钟限制
-                with eventlet.Timeout(12, False):
+                with eventlet.Timeout(5, False):
                     for i in range(len(ts_lists)):
                         ts_url = channel_url_t + ts_lists[i]  # 拼接单个视频片段下载链接
                         response = requests.get(ts_url, stream=True, timeout=1)
@@ -239,7 +242,7 @@ def worker():
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 0.5:
+                if normalized_speed >= 0.35:
                     #if file_size >= 12000000:
                     result = channel_name, channel_url, f"{normalized_speed:.3f} MB/s"
                     results.append(result)
@@ -272,7 +275,7 @@ def worker():
 
 
 # 创建多个工作线程
-num_threads = 10
+num_threads = 3
 for _ in range(num_threads):
     t = threading.Thread(target=worker, daemon=True)  # 将工作线程设置为守护线程
     t.start()
@@ -309,7 +312,7 @@ with open("itv_speed.txt", 'w', encoding='utf-8') as file:
 
 
 #result_counter = 8  # 每个频道需要的个数
-result_counter = 1  # 每个频道需要的个数
+result_counter = 3  # 每个频道需要的个数
 
 with open("itvlist.txt", 'w', encoding='utf-8') as file:
     channel_counters = {}
