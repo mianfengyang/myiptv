@@ -240,7 +240,7 @@ def worker():
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 0.3:
+                if normalized_speed >= 0.25:
                     #if file_size >= 12000000:
                     result = channel_name, channel_url, f"{normalized_speed:.3f} MB/s"
                     results.append(result)
@@ -310,7 +310,7 @@ with open("itv_speed.txt", 'w', encoding='utf-8') as file:
 
 
 #result_counter = 8  # 每个频道需要的个数
-result_counter = 1 # 每个频道需要的个数
+result_counter = 3 # 每个频道需要的个数
 
 with open("itvlist.txt", 'w', encoding='utf-8') as file:
     channel_counters = {}
@@ -361,7 +361,7 @@ with open("itvlist.m3u", 'w', encoding='utf-8') as file:
     file.write('#EXTM3U\n')
     for result in results:
         channel_name, channel_url, speed = result
-        if "CCTV13" == channel_name or "第一财经" == channel_name or "上海财经" == channel_name or "凤皇" in channel_name:
+        if "CCTV13" == channel_name or "第一财经" == channel_name or "上海财经" == channel_name or "凤凰" in channel_name or "香港" in channel_name or "TVB" in channel_name:
             if channel_name in channel_counters:
                 if channel_counters[channel_name] >= result_counter:
                     continue

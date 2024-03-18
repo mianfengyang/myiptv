@@ -16,7 +16,7 @@ class Convert:
             for line in lines:
                 title = line.split(',')[0]
                 titleUrl = line.split(',')[1]
-                if "CCTV13" == title or "第一财经" == title or "上海财经" == title or "凤皇" in title:
+                if "CCTV13" == title or "第一财经" == title or "上海财经" == title or "凤皇" in title or "TVB" in title or "香港" in title:
                     if title in self.channel_counters:
                         if self.channel_counters[title] >= result_counter:
                             continue
