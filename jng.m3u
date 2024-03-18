@@ -1,0 +1,46 @@
+#EXTM3U
+#EXTINF:-1 group-title="收藏频道",TVBS亚洲
+https://epg.pw/stream/c88adc69fe22cc05c7ff2984ad14db99f461e6dda12687cb7bbaf5e03a357a38.m3u8
+
+#EXTINF:-1 group-title="收藏频道",TVBS亚洲
+https://epg.pw/stream/a4696392133577ed03dbedefe5c18c3c7a178b0899b2f814fa6c532bc521f8f4.m3u8
+
+#EXTINF:-1 group-title="收藏频道",TVBS亚洲
+https://epg.pw/stream/546bdd4b82259d8d136893bafc3b1fa4dec137fb88ab10b9fa02b7469bc83a0c.m3u8
+
+#EXTINF:-1 group-title="收藏频道",TVBS新闻
+https://epg.pw/stream/e42d43f285697c54fa100b46d6d52457f908037ab23032ca681bd7ff026c7b97.m3u8
+
+#EXTINF:-1 group-title="收藏频道",TVBS新闻
+https://epg.pw/stream/3a8d129a03f92db91cefa8f474b876f921d9b1b8346b42b1be50e7bcc7287940.m3u8
+
+#EXTINF:-1 group-title="收藏频道",TVBS新闻
+https://epg.pw/stream/34b62c472f066e823052d269c322b8dc8150262fa8022acd359cd6702296b794.m3u8
+
+#EXTINF:-1 group-title="收藏频道",香港卫视
+http://zhibo.hkstv.tv/livestream/mutfysrq/playlist.m3u8
+
+#EXTINF:-1 group-title="收藏频道",香港卫视
+https://epg.pw/stream/1b440a21b089797aecfd8328b5f587036dbeb394a97b3baaaca595ca6692ef93.m3u8
+
+#EXTINF:-1 group-title="收藏频道",香港卫视
+https://epg.pw/stream/99980f8e82d6d4111c77f2fe961013e7d1ee153a55c7a9be69cfa17143933fd1.m3u8
+
+#EXTINF:-1 group-title="收藏频道",香港佛陀
+https://js1.amtb.cn/liveedge/_definst_/livetv/playlist.m3u8
+
+#EXTINF:-1 group-title="收藏频道",凤凰中文
+http://www.372583307.top:4022/udp/233.50.200.191:5140
+
+#EXTINF:-1 group-title="收藏频道",凤凰中文
+http://www.372583307.top:4022/udp/233.50.200.192:5140
+
+#EXTINF:-1 group-title="收藏频道",凤凰资讯
+http://playtv-live.ifeng.com/live/06OLEGEGM4G.m3u8
+
+#EXTINF:-1 group-title="收藏频道",香港佛陀
+http://js1.amtb.cn/liveedge/_definst_/livetv/chunklist.m3u8
+
+#EXTINF:-1 group-title="收藏频道",香港佛陀
+https://js1.amtb.cn/liveedge/_definst_/livetv/playlist.m3u8
+

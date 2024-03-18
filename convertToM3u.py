@@ -14,26 +14,28 @@ class Convert:
         with open(self.input_file, 'r') as f:
             lines = f.readlines()
             for line in lines:
-                title = line.split(',')[0]
-                titleUrl = line.split(',')[1]
-                if "CCTV13" == title or "第一财经" == title or "上海财经" == title or "凤皇" in title or "TVB" in title or "香港" in title:
-                    if title in self.channel_counters:
-                        if self.channel_counters[title] >= result_counter:
-                            continue
+                if "http" in line:
+                    title = line.split(',')[0]
+                    titleUrl = line.split(',')[1]
+
+                    if "凤凰" in title or "TVB" in title or "香港" in title:
+                        if title in self.channel_counters:
+                            if self.channel_counters[title] >= result_counter:
+                                continue
+                            else:
+                                fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n{titleUrl}\n")
+                                self.channel_counters[title] += 1
                         else:
-                            fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
-                            fw.write(f"{titleUrl}\n")
-                            self.channel_counters[title] += 1
+                            fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n{titleUrl}\n")
+                            self.channel_counters[title] = 1
                     else:
-                        fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
-                        fw.write(f"{titleUrl}\n")
-                        self.channel_counters[title] = 1
-                else:
-                    continue
+                        continue
 if __name__ == '__main__':
     iptv_itvall_txt_file = './itv_results.txt'
     iptv_itvall_m3u_file = './itvall.m3u'
-    convert = Convert(iptv_itvall_txt_file, iptv_itvall_m3u_file)
+    iptv_jng_txt_file = './tvlive/tvlive.txt'
+    iptv_jng_m3u_file = './jng.m3u'
+    convert = Convert(iptv_jng_txt_file, iptv_jng_m3u_file)
     convert.convert()
     print("Done")
     exit(0)
