@@ -8,7 +8,7 @@ class Convert:
     def convert(self):
         self.pretext = "#EXTINF:-1 group-title="
         self.channel_counters = {}
-        result_counter = 1
+        result_counter = 3
         fw = open(self.output_file, 'w')
         fw.write("#EXTM3U\n")
         with open(self.input_file, 'r') as f:
@@ -16,12 +16,18 @@ class Convert:
             for line in lines:
                 title = line.split(',')[0]
                 titleUrl = line.split(',')[1]
-                if title in self.channel_counters:
-                    continue
                 if "CCTV13" == title or "第一财经" == title or "上海财经" == title or "凤皇" in title:
-                    fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
-                    fw.write(f"{titleUrl}\n")
-                    self.channel_counters[title] = title
+                    if title in self.channel_counters:
+                        if self.channel_counters[title] >= result_counter:
+                            continue
+                        else:
+                            fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
+                            fw.write(f"{titleUrl}\n")
+                            self.channel_counters[title] += 1
+                    else:
+                        fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
+                        fw.write(f"{titleUrl}\n")
+                        self.channel_counters[title] = 1
                 else:
                     continue
 if __name__ == '__main__':
