@@ -5,18 +5,15 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import requests
 import re
-import os
-import subprocess
 import threading
 from queue import Queue
 
 
 urls = [
-    "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iYmVpamluZyI%3D",  # Beijing (北京)
     "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iZ3Vhbmdkb25nIg%3D%3D",  # Guangdong (广东)
     "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0ic2hhbmdoYWki",  # Shanghai (上海)
     "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iamlhbmdzdSI%3D",  # Jiangsu (江苏)
-    "https://www.zoomeye.org/searchResult?q=%2Fiptv%2Flive%2Fzh_cn.js%20%2Bcountry%3A%22CN%22%20%2Bsubdivisions%3A%22jiangsu%22",    #江苏
+    "https://www.zoomeye.org/searchResult?q=%2Fiptv%2Flive%2Fzh_cn.js%20%2Bcountry%3A%22CN%22%20%2Bsubdivisions%3A%22jiangsu%22" #江苏
     ]
 
 def modify_urls(url):
@@ -135,7 +132,7 @@ for url in urls:
 
                         if name and urlx:
                             # 删除特定文字
-                            name = name.replace("cctv", "CCTV")
+                            """name = name.replace("cctv", "CCTV")
                             name = name.replace("中央", "CCTV")
                             name = name.replace("央视", "CCTV")
                             name = name.replace("高清", "")
@@ -177,8 +174,9 @@ for url in urls:
                             name = name.replace("CCTV17农业", "CCTV17")
                             name = name.replace("CCTV5+体育赛视", "CCTV5+")
                             name = name.replace("CCTV5+体育赛事", "CCTV5+")
-                            name = name.replace("CCTV5+体育", "CCTV5+")
-                            results.append(f"{name},{urld}")
+                            name = name.replace("CCTV5+体育", "CCTV5+")"""
+                            if "高清" or "超高" or "HD" in name:
+                                results.append(f"{name},{urld}")
             except:
                 continue
         except:
@@ -242,7 +240,7 @@ def worker():
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 0.35:
+                if normalized_speed >= 0.3:
                     #if file_size >= 12000000:
                     result = channel_name, channel_url, f"{normalized_speed:.3f} MB/s"
                     results.append(result)
@@ -275,7 +273,7 @@ def worker():
 
 
 # 创建多个工作线程
-num_threads = 3
+num_threads = 10
 for _ in range(num_threads):
     t = threading.Thread(target=worker, daemon=True)  # 将工作线程设置为守护线程
     t.start()
@@ -312,7 +310,7 @@ with open("itv_speed.txt", 'w', encoding='utf-8') as file:
 
 
 #result_counter = 8  # 每个频道需要的个数
-result_counter = 3  # 每个频道需要的个数
+result_counter = 1 # 每个频道需要的个数
 
 with open("itvlist.txt", 'w', encoding='utf-8') as file:
     channel_counters = {}
@@ -363,48 +361,14 @@ with open("itvlist.m3u", 'w', encoding='utf-8') as file:
     file.write('#EXTM3U\n')
     for result in results:
         channel_name, channel_url, speed = result
-        if 'CCTV' in channel_name:
+        if 'CCTV' or '第一财经' or '上海财经' or '凤皇' in channel_name:
             if channel_name in channel_counters:
                 if channel_counters[channel_name] >= result_counter:
                     continue
                 else:
-                    file.write(f"#EXTINF:-1 group-title=\"央视频道\",{channel_name}\n")
+                    file.write(f"#EXTINF:-1 group-title=\"收藏频道\",{channel_name}\n")
                     file.write(f"{channel_url}\n")
                     channel_counters[channel_name] += 1
-            else:
-                file.write(f"#EXTINF:-1 group-title=\"央视频道\",{channel_name}\n")
-                file.write(f"{channel_url}\n")
-                channel_counters[channel_name] = 1
-    channel_counters = {}
-    #file.write('卫视频道,#genre#\n')
-    for result in results:
-        channel_name, channel_url, speed = result
-        if '卫视' in channel_name:
-            if channel_name in channel_counters:
-                if channel_counters[channel_name] >= result_counter:
-                    continue
-                else:
-                    file.write(f"#EXTINF:-1 group-title=\"卫视频道\",{channel_name}\n")
-                    file.write(f"{channel_url}\n")
-                    channel_counters[channel_name] += 1
-            else:
-                file.write(f"#EXTINF:-1 group-title=\"卫视频道\",{channel_name}\n")
-                file.write(f"{channel_url}\n")
-                channel_counters[channel_name] = 1
-    channel_counters = {}
-    #file.write('其他频道,#genre#\n')
-    for result in results:
-        channel_name, channel_url, speed = result
-        if 'CCTV' not in channel_name and '卫视' not in channel_name and '测试' not in channel_name:
-            if channel_name in channel_counters:
-                if channel_counters[channel_name] >= result_counter:
-                    continue
-                else:
-                    file.write(f"#EXTINF:-1 group-title=\"其他频道\",{channel_name}\n")
-                    file.write(f"{channel_url}\n")
-                    channel_counters[channel_name] += 1
-            else:
-                file.write(f"#EXTINF:-1 group-title=\"其他频道\",{channel_name}\n")
-                file.write(f"{channel_url}\n")
-                channel_counters[channel_name] = 1
+            
+    
 

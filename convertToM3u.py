@@ -7,24 +7,27 @@ class Convert:
 
     def convert(self):
         self.pretext = "#EXTINF:-1 group-title="
-        content = []
+        self.channel_counters = {}
+        result_counter = 1
         fw = open(self.output_file, 'w')
         fw.write("#EXTM3U\n")
         with open(self.input_file, 'r') as f:
             lines = f.readlines()
             for line in lines:
-                if "#genre#" in line:
-                    groupTitle = line.split(',')[0]
+                title = line.split(',')[0]
+                titleUrl = line.split(',')[1]
+                if title in self.channel_counters:
                     continue
-                if "http" in line:
-                    title = line.split(',')[0]
-                    titleUrl = line.split(',')[1]
-                buf = self.pretext + '"' + groupTitle + '"' + "," + title + "\n" + titleUrl
-                #print(buf)
-                fw.write(buf)
-
+                if "CCTV13" == title or "第一财经" == title or "上海财经" == title or "凤皇" in title:
+                    fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
+                    fw.write(f"{titleUrl}\n")
+                    self.channel_counters[title] = title
+                else:
+                    continue
 if __name__ == '__main__':
-    convert = Convert('./tvlive/tvlive.txt', 'JNG.m3u')
+    iptv_itvall_txt_file = './itv_results.txt'
+    iptv_itvall_m3u_file = './itvall.m3u'
+    convert = Convert(iptv_itvall_txt_file, iptv_itvall_m3u_file)
     convert.convert()
     print("Done")
     exit(0)
