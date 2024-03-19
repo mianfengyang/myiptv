@@ -1,4 +1,10 @@
 #EXTM3U
+#EXTINF:-1 group-title="收藏频道",CCTV-13 新闻
+http://39.134.24.166/dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221226233/index.m3u8
+
+#EXTINF:-1 group-title="收藏频道",CCTV-13 新闻
+http://39.134.24.166/dbiptv.sn.chinamobile.com/PLTV/88888888/224/3221226233/1.m3u8
+
 #EXTINF:-1 group-title="收藏频道",TVBS亚洲
 https://epg.pw/stream/c88adc69fe22cc05c7ff2984ad14db99f461e6dda12687cb7bbaf5e03a357a38.m3u8
 

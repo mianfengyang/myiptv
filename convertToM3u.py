@@ -18,15 +18,17 @@ class Convert:
                     title = line.split(',')[0]
                     titleUrl = line.split(',')[1]
 
-                    if "凤凰" in title or "TVB" in title or "香港" in title:
+                    if "CCTV-13" in title or "凤凰" in title or "TVB" in title or "香港" in title:
                         if title in self.channel_counters:
                             if self.channel_counters[title] >= result_counter:
                                 continue
                             else:
-                                fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n{titleUrl}\n")
+                                fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
+                                fw.write(f"{titleUrl}\n")
                                 self.channel_counters[title] += 1
                         else:
-                            fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n{titleUrl}\n")
+                            fw.write(f"#EXTINF:-1 group-title=\"收藏频道\",{title}\n")
+                            fw.write(f"{titleUrl}\n")
                             self.channel_counters[title] = 1
                     else:
                         continue
