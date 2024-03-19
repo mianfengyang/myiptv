@@ -132,7 +132,7 @@ for url in urls:
 
                         if name and urlx:
                             # 删除特定文字
-                            """name = name.replace("cctv", "CCTV")
+                            name = name.replace("cctv", "CCTV")
                             name = name.replace("中央", "CCTV")
                             name = name.replace("央视", "CCTV")
                             name = name.replace("高清", "")
@@ -174,9 +174,8 @@ for url in urls:
                             name = name.replace("CCTV17农业", "CCTV17")
                             name = name.replace("CCTV5+体育赛视", "CCTV5+")
                             name = name.replace("CCTV5+体育赛事", "CCTV5+")
-                            name = name.replace("CCTV5+体育", "CCTV5+")"""
-                            if "高清" or "超高" or "HD" in name:
-                                results.append(f"{name},{urld}")
+                            name = name.replace("CCTV5+体育", "CCTV5+")
+                            results.append(f"{name},{urld}")
             except:
                 continue
         except:
