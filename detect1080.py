@@ -20,12 +20,13 @@ def get_stream_resolution(m3u_url):
                 code = match.group(1)
                 width = match.group(2)
                 height = match.group(3)
-                resolution = f"{code}-{width}x{height}"
-                print(f"Resolution: {code}-{width}x{height}")
-                if '1920' in resolution:
-                    resolution = "1080p"
+                #print(f"Resolution: {code}-{width}x{height}")
+                if '1920' in width and 'h264' in code:
+                    resolution = f"{code}-{width}x{height}"
+                else:
+                    resolution = None
             else:
-                print("Failed to get resolution information")
+                    resolution = None
     return resolution
 # 测试 m3u 链接的视频流分辨率
 m3u_url = "http://[2409:8087:7001:20:3::2]:80/dbiptv.sn.chinamobile.com/PLTV/88888888/224/3221226233/index.m3u8"#

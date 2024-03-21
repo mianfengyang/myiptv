@@ -64,7 +64,7 @@ def worker():
                     if file_size >= 12000000:
                         resolution = get_stream_resolution(channel_url)
                         result = channel_name, channel_url,resolution, f"{normalized_speed:.3f} MB/s"
-                        if resolution == "1080p":
+                        if resolution:
                             results.append(result)
                         numberx = (len(results) + len(error_channels)) / len(channels) * 100
                         print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
@@ -108,12 +108,13 @@ def get_stream_resolution(m3u_url):
                 code = match.group(1)
                 width = match.group(2)
                 height = match.group(3)
-                resolution = f"{code}-{width}x{height}"
-                if '1920' in resolution:
-                    resolution = "1080p"
+                if '1920' in width and 'h264' in code:
+                    resolution = f"{code}-{width}x{height}"
+                else:
+                    resolution = None
                 #print(f"Resolution: {code}-{width}x{height}")
             else:
-                print("Failed to get resolution information")
+                    resolution = None
     return resolution
 
 # 创建多个工作线程
