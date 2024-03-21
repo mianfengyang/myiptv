@@ -1,4 +1,5 @@
 import os
+import subprocess
 import re
 import time
 import datetime
@@ -61,8 +62,10 @@ def worker():
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
                 if normalized_speed >= 1:
                     if file_size >= 12000000:
-                        result = channel_name, channel_url, f"{normalized_speed:.3f} MB/s"
-                        results.append(result)
+                        resolution = get_stream_resolution(channel_url)
+                        result = channel_name, channel_url,resolution, f"{normalized_speed:.3f} MB/s"
+                        if resolution == "1080p":
+                            results.append(result)
                         numberx = (len(results) + len(error_channels)) / len(channels) * 100
                         print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
                     else:
@@ -89,6 +92,29 @@ def worker():
         # 标记任务完成
         task_queue.task_done()
 
+def get_stream_resolution(m3u_url):
+    # 使用 FFmpeg 获取视频流信息
+    command = ['ffmpeg', '-i', m3u_url]
+    result = subprocess.run(command, stderr=subprocess.PIPE)
+
+    # 从输出中解析分辨率信息
+    output = result.stderr.decode('utf-8')
+    for line in output.split('\n'):
+        if 'Video: ' in line:
+            #print(line)
+            match = re.search(r'(h\d+|h\w+|vp9|mpeg).* (\d+)x(\d+)', line)
+            #print(match)
+            if match:
+                code = match.group(1)
+                width = match.group(2)
+                height = match.group(3)
+                resolution = f"{code}-{width}x{height}"
+                if '1920' in resolution:
+                    resolution = "1080p"
+                #print(f"Resolution: {code}-{width}x{height}")
+            else:
+                print("Failed to get resolution information")
+    return resolution
 
 # 创建多个工作线程
 num_threads = 10
@@ -112,28 +138,28 @@ def channel_key(channel_name):
         return float('inf')  # 返回一个无穷大的数字作为关键字
 
 # 对频道进行排序
-results.sort(key=lambda x: (x[0], -float(x[2].split()[0])))
+results.sort(key=lambda x: (x[0], -float(x[3].split()[0])))
 results.sort(key=lambda x: channel_key(x[0]))
 now_today = datetime.date.today()
 # 将结果写入文件
 with open("yqiqtv_results.txt", 'w', encoding='utf-8') as file:
     for result in results:
-        channel_name, channel_url, speed = result
-        file.write(f"{channel_name},{channel_url},{speed}\n")
+        channel_name, channel_url, resolution, speed = result
+        file.write(f"{channel_name},{channel_url},{resolution},{speed}\n")
 
 with open("yqiqtv_speed.txt", 'w', encoding='utf-8') as file:
     for result in results:
-        channel_name, channel_url, speed = result
+        channel_name, channel_url, resolution, speed = result
         file.write(f"{channel_name},{channel_url}\n")
 
 
-result_counter = 3  # 每个频道需要的个数
+result_counter = 1  # 每个频道需要的个数
 
 with open("yqiqtvlist.txt", 'w', encoding='utf-8') as file:
     channel_counters = {}
     file.write('央视频道,#genre#\n')
     for result in results:
-        channel_name, channel_url, speed = result
+        channel_name, channel_url, resolution, speed = result
         if 'CCTV' in channel_name:
             if channel_name in channel_counters:
                 if channel_counters[channel_name] >= result_counter:
@@ -148,7 +174,7 @@ with open("yqiqtvlist.txt", 'w', encoding='utf-8') as file:
     channel_counters = {}
     file.write('其他频道,#genre#\n')
     for result in results:
-        channel_name, channel_url, speed = result
+        channel_name, channel_url, resolution, speed = result
         if 'CCTV' not in channel_name and '卫视' not in channel_name and '测试' not in channel_name:
             if channel_name in channel_counters:
                 if channel_counters[channel_name] >= 1:
@@ -164,8 +190,8 @@ with open("yqiqtv.m3u", 'w', encoding='utf-8') as file:
     channel_counters = {}
     file.write('#EXTM3U\n')
     for result in results:
-        channel_name, channel_url, speed = result
-        if "CCTV13" in channel_name or "财经" in channel_name or "凤凰" in channel_name or "香港" in channel_name or "TVB" in channel_name:
+        channel_name, channel_url, resolution, speed = result
+        if "CCTV13" == channel_name or "财经" in channel_name or "凤凰" in channel_name or "香港" in channel_name or "TVB" in channel_name:
             if channel_name in channel_counters:
                 if channel_counters[channel_name] >= result_counter:
                     continue
