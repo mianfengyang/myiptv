@@ -298,7 +298,7 @@ def worker():
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 0.6:
+                if normalized_speed >= 0.5:
                     #if file_size >= 12000000:
                     resolution = get_stream_resolution(channel_url)
                     if resolution:
@@ -370,7 +370,7 @@ with open("itv_speed.txt", 'w', encoding='utf-8') as file:
 
 
 #result_counter = 8  # 每个频道需要的个数
-result_counter = 3 # 每个频道需要的个数
+result_counter = 1 # 每个频道需要的个数
 
 with open("itvlist.txt", 'w', encoding='utf-8') as file:
     channel_counters = {}
