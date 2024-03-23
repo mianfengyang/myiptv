@@ -11,7 +11,7 @@ import eventlet
 eventlet.monkey_patch()
 
 # 禁用代理
-os.environ['no_proxy'] = '*'
+#os.environ['no_proxy'] = '*'
 
 # 线程安全的队列，用于存储下载任务
 task_queue = Queue()
@@ -22,13 +22,13 @@ results = []
 channels = []
 error_channels = []
 
-with open("yqiqtv.txt", 'r', encoding='utf-8') as file:
+with open("fh.txt", 'r', encoding='utf-8') as file:
     lines = file.readlines()
     for line in lines:
         line = line.strip()
-        if "CCTV" in line or "财经" in line or "凤凰" in line or "香港" in line or "TVB" in line:
-            channel_name, channel_url = line.split(',')
-            channels.append((channel_name, channel_url))
+        #if "CCTV" in line or "财经" in line or "凤凰" in line or "香港" in line or "TVB" in line:
+        channel_name, channel_url = line.split(',')
+        channels.append((channel_name, channel_url))
 
 # 定义工作线程函数
 def worker():
@@ -55,24 +55,24 @@ def worker():
                         response.close()
                 end_time = time.time()
                 response_time = end_time - start_time
-                if response_time >=12:
-                    file_size = 0
+                # if response_time >=12:
+                #     file_size = 0
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 1:
-                    if file_size >= 12000000:
-                        resolution = get_stream_resolution(channel_url)
-                        result = channel_name, channel_url,resolution, f"{normalized_speed:.3f} MB/s"
-                        if resolution:
-                            results.append(result)
-                        numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                        print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
-                    else:
-                        error_channel = channel_name, channel_url
-                        error_channels.append(error_channel)
-                        numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                        print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} , 网速：{normalized_speed:.3f} MB/s , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                if normalized_speed >= 0.2:
+                    # if file_size >= 12000000:
+                    resolution = get_stream_resolution(channel_url)
+                    result = channel_name, channel_url,resolution, f"{normalized_speed:.3f} MB/s"
+                    if resolution:
+                        results.append(result)
+                    numberx = (len(results) + len(error_channels)) / len(channels) * 100
+                    print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    # else:
+                    #     error_channel = channel_name, channel_url
+                    #     error_channels.append(error_channel)
+                    #     numberx = (len(results) + len(error_channels)) / len(channels) * 100
+                    #     print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} , 网速：{normalized_speed:.3f} MB/s , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
                 else:
                     error_channel = channel_name, channel_url
                     error_channels.append(error_channel)
@@ -108,7 +108,7 @@ def get_stream_resolution(m3u_url):
                 code = match.group(1)
                 width = match.group(2)
                 height = match.group(3)
-                if '1920' in width and 'h264' in code:
+                if 'hevc' not in code:
                     resolution = f"{code}-{width}x{height}"
                 else:
                     resolution = None
@@ -118,7 +118,7 @@ def get_stream_resolution(m3u_url):
     return resolution
 
 # 创建多个工作线程
-num_threads = 10
+num_threads = 16
 for _ in range(num_threads):
     t = threading.Thread(target=worker, daemon=True) 
     t.start()
@@ -192,16 +192,16 @@ with open("yqiqtv.m3u", 'w', encoding='utf-8') as file:
     file.write('#EXTM3U\n')
     for result in results:
         channel_name, channel_url, resolution, speed = result
-        if "CCTV13" == channel_name or "财经" in channel_name or "凤凰" in channel_name or "香港" in channel_name or "TVB" in channel_name:
-            if channel_name in channel_counters:
-                if channel_counters[channel_name] >= result_counter:
-                    continue
-                else:
-                    file.write(f"#EXTINF:-1 group-channel_name=\"收藏频道\", {channel_name}\n")
-                    file.write(f"{channel_url}\n")
-                    channel_counters[channel_name] += 1
+        # if "CCTV13" == channel_name or "财经" in channel_name or "凤凰" in channel_name or "香港" in channel_name or "TVB" in channel_name:
+        if channel_name in channel_counters:
+            if channel_counters[channel_name] >= result_counter:
+                continue
             else:
-                file.write(f"#EXTINF:-1 group-channel_name=\"收藏频道\",{channel_name}\n")
+                file.write(f"#EXTINF:-1 group-channel_name=\"收藏频道\", {channel_name}\n")
                 file.write(f"{channel_url}\n")
-                channel_counters[channel_name] = 1
+                channel_counters[channel_name] += 1
+        else:
+            file.write(f"#EXTINF:-1 group-channel_name=\"收藏频道\",{channel_name}\n")
+            file.write(f"{channel_url}\n")
+            channel_counters[channel_name] = 1
 

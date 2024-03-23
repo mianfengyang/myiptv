@@ -13,7 +13,7 @@ from queue import Queue
 os.environ['no_proxy'] = '*'
 
 urls = [
-    "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iaGsi", #HK
+    "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iSGFpTmFuIg%3D%3D", #海南
     "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iSGViZWki",  # Hebei (河北)
     "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iYmVpamluZyI%3D",  # Beijing (北京)
     "https://fofa.info/result?qbase64=ImlwdHYvbGl2ZS96aF9jbi5qcyIgJiYgY291bnRyeT0iQ04iICYmIHJlZ2lvbj0iZ3Vhbmdkb25nIg%3D%3D",  # Guangdong (广东)
@@ -219,7 +219,7 @@ for url in urls:
 
 
 channels = []
-
+favorate = ['CCTV','财经','凤凰','香港','TVB','民视','中视','莲花','纪实']
 for result in results:
     line = result.strip()
     if result:
@@ -243,6 +243,7 @@ task_queue = Queue()
 results = []
 
 error_channels = []
+
 def get_stream_resolution(m3u_url):
     # 使用 FFmpeg 获取视频流信息
     command = ['ffmpeg', '-i', m3u_url]
@@ -298,7 +299,7 @@ def worker():
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 0.5:
+                if normalized_speed >= 0.3:
                     #if file_size >= 12000000:
                     resolution = get_stream_resolution(channel_url)
                     if resolution:
