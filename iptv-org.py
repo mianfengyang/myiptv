@@ -21,15 +21,26 @@ results = []
 
 channels = []
 error_channels = []
-
-with open("htm.txt", 'r', encoding='utf-8') as file:
-    lines = file.readlines()
-    for line in lines:
-        if 'http' in line:
-            channel_name = line.split(',')[0].strip()
-            channel_url = line.split(',')[1].strip()
-            channels.append((channel_name, channel_url))
-
+if os.path.exists("htm.txt"):
+    with open("htm.txt", 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+        for line in lines:
+            if 'http' in line:
+                channel_name = line.split(',')[0].strip()
+                channel_url = line.split(',')[1].strip()
+                if '凤凰' in channel_name or '香港' in channel_name or 'TVB' in channel_name:
+                    channels.append((channel_name, channel_url))
+if os.path.exists("iptv-index.m3u"):
+    with open("iptv-index.m3u", 'r', encoding='utf-8') as file:
+        lines = file.readline()
+        while lines:
+            lines = file.readline()
+            if '#EXTINF' in lines:
+                channel_name = lines.split(',')[1].strip()
+                lines = next(file)
+                channel_url = lines.strip()
+                if '凤凰' in channel_name or '香港' in channel_name or 'TVB' in channel_name:
+                    channels.append((channel_name, channel_url))
 def worker():
     while True:
         # 从队列中获取一个任务
@@ -59,7 +70,7 @@ def worker():
                 download_speed = file_size / response_time / 1024
                 normalized_speed =download_speed / 1024  # 将速率从kB/s转换为MB/s
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
-                if normalized_speed >= 0.5:
+                if normalized_speed >= 0.25:
                     # if file_size >= 12000000:
                     resolution = get_stream_resolution(channel_url)
                     result = channel_name, channel_url,resolution, f"{normalized_speed:.3f} MB/s"
@@ -107,7 +118,7 @@ def get_stream_resolution(m3u_url):
                 code = match.group(1)
                 width = match.group(2)
                 height = match.group(3)
-                if '1920' in width and 'h264' in code:
+                if 'hevc' not in code:
                     resolution = f"{code}-{width}x{height}"
                 else:
                     resolution = None
@@ -117,7 +128,7 @@ def get_stream_resolution(m3u_url):
     return resolution
 
 # 创建多个工作线程
-num_threads = 10
+num_threads = 16
 for _ in range(num_threads):
     t = threading.Thread(target=worker, daemon=True) 
     t.start()

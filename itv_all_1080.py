@@ -259,7 +259,7 @@ def get_stream_resolution(m3u_url):
                 code = match.group(1)
                 width = match.group(2)
                 height = match.group(3)
-                if '1920' in width and 'h264' in code:
+                if 'hevc' not in code:
                     resolution = f"{code}-{width}x{height}"
                 else:
                     resolution = None
@@ -333,7 +333,7 @@ def worker():
 
 
 # 创建多个工作线程
-num_threads = 10
+num_threads = 16
 for _ in range(num_threads):
     t = threading.Thread(target=worker, daemon=True)  # 将工作线程设置为守护线程
     t.start()
