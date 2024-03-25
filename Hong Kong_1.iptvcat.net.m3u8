@@ -1,0 +1,7 @@
+#EXTM3U
+#EXTINF:0 tvg-country="HK" tvg-logo="https://i.imgur.com/jaIdkbz.png" group-title="Undefined",HKIBC
+https://uc6.i-cable.com/live_freedirect/opentvhd002_h.live/playlist.m3u8?checkedby:iptvcat.net
+#EXTINF:0 tvg-country="HK" tvg-logo="https://i.imgur.com/MXLuUoU.png" group-title="Undefined",RTHK (港台電視32) (1080p)
+https://rthktv32-live.akamaized.net/hls/live/2036819/RTHKTV32/master.m3u8?checkedby:iptvcat.net
+#EXTINF:0 tvg-country="HK" tvg-logo="https://upload.wikimedia.org/wikipedia/zh/4/4e/Canal_Macau.png" group-title="Undefined",澳视葡文
+http://live4.tdm.com.mo:80/ch2/_definst_/ch2.live/playlist.m3u8?checkedby:iptvcat.net
