@@ -301,17 +301,23 @@ def worker():
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
                 if normalized_speed >= 0.3:
                     #if file_size >= 12000000:
-                    resolution = get_stream_resolution(channel_url)
-                    if resolution:
+                    if 'CCTV' in channel_name:
+                        resolution = get_stream_resolution(channel_url)
+                        if resolution:
+                            result = channel_name, channel_url, resolution, f"{normalized_speed:.3f} MB/s"
+                            results.append(result)
+                            numberx = (len(results) + len(error_channels)) / len(channels) * 100
+                            print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                        else:
+                            error_channel = channel_name, channel_url
+                            error_channels.append(error_channel)
+                            numberx = (len(results) + len(error_channels)) / len(channels) * 100
+                            print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} , 网速：{normalized_speed:.3f} MB/s , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    else:
                         result = channel_name, channel_url, resolution, f"{normalized_speed:.3f} MB/s"
                         results.append(result)
                         numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                        print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
-                    else:
-                       error_channel = channel_name, channel_url
-                       error_channels.append(error_channel)
-                       numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                       print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} , 网速：{normalized_speed:.3f} MB/s , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                        print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")    
                 else:
                     error_channel = channel_name, channel_url
                     error_channels.append(error_channel)
