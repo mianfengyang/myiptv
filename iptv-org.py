@@ -30,8 +30,8 @@ if os.path.exists("htm.txt"):
                 channel_url = line.split(',')[1].strip()
                 if '凤凰' in channel_name or '香港' in channel_name or 'TVB' in channel_name:
                     channels.append((channel_name, channel_url))
-if os.path.exists("iptv-index.m3u"):
-    with open("iptv-index.m3u", 'r', encoding='utf-8') as file:
+if os.path.exists("hk.m3u"):
+    with open("hk.m3u", 'r', encoding='utf-8') as file:
         lines = file.readline()
         while lines:
             lines = file.readline()
@@ -39,8 +39,8 @@ if os.path.exists("iptv-index.m3u"):
                 channel_name = lines.split(',')[1].strip()
                 lines = next(file)
                 channel_url = lines.strip()
-                if '凤凰' in channel_name or '香港' in channel_name or 'TVB' in channel_name:
-                    channels.append((channel_name, channel_url))
+                #if '凤凰' in channel_name or '香港' in channel_name or 'TVB' in channel_name:
+                channels.append((channel_name, channel_url))
 def worker():
     while True:
         # 从队列中获取一个任务

@@ -17,7 +17,7 @@ results = []
 channels = []
 error_channels = []
 
-with open("itv.txt", 'r', encoding='utf-8') as file:
+with open("itv-source.txt", 'r', encoding='utf-8') as file:
     lines = file.readlines()
     for line in lines:
         line = line.strip()
