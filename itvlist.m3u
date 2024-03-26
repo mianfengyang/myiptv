@@ -45,8 +45,6 @@ https://edge2.laotv.la/live/PhxChinese/index.m3u8
 https://edge1.laotv.la/live/PhoenixNews/index.m3u8
 #EXTINF:-1 group-title="收藏频道",HBO-HD
 https://edge2.laotv.la/live/HBO/index.m3u8
-#EXTINF:-1 group-title="收藏频道",中天新闻台
-https://cdn.ggapk.net/live/tv?id=53d84Q678AURStL0kc5hYyEruI2H_294SIZI6YD6sSQ-Gex0d0PvTcKpKoT_HUBeHHrWHYNh-5DQ_Br7R1_-wT5wUBa1rBjZX7lmvTt3EXNeI_9yU3gqYBbzrTEkrE59LdWLvNeYRhdwggCvWhraLKctbdyIpv93HdyLyMvyPsMhnOv3D0B9J3yFo4yjI-4R3MctFk9rDtyvsIYZFysxRt_4ECbEJn62gEU2qMOpy0wfhhcvhL1jI_q5TGfhkeI-AtXz_BxQeNLSOPT5WDanKME_00gZCoMeoIBg6vojgYFJMRY3JV65d8avwbNlzvLW1tlbfDg-dlM3qPiMj-Hf7kMquCKeCIES_gOPjeRy7R6jFo-RpmqP8_Nukiha1DBmv_7YxGPKFWOhmBtTkyEiK7S7gQj4mIRoJxqBo7imHPbaysmZDLuEzGvj0lpQR_lzOmNHgPpyJ-SVlg3-e09m8nPHghCPT9UYb_ajmrMVfsXrKNa8r2TVuGYTaCFPObIueBwaBK_KE6g7IKjLu0vuTM_PMbQykwPe3P6N8pKlq8u1wUEaBa9K3-AwH_zT_CyS6dDHDdXR8rjDLEtx3WCJ-41aQWAWpi92p5zvryIX5lNi6LvWAbzwM90puIaPBEDaKWuQ3IuTtTDic3U&idp=e494HmATlyXspDdupvrwqMrPxNKPsHo8Q10TWYxx74j31IQ3JlBhc-pdhpU
 #EXTINF:-1 group-title="收藏频道",求索记录
 http://[2409:8087:7001:20:1000::95]:6610/000000001000/6000000002000032052/index.m3u8?channel-id=wasusyt&Contentid=6000000002000032052&livemode=1&stbId=3
 #EXTINF:-1 group-title="收藏频道",求索动物
