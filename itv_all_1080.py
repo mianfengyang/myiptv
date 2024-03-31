@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 import requests
 import re
 import os
+import wget
 import subprocess
 import threading
 from queue import Queue
@@ -51,6 +52,38 @@ urls = [
     "https://www.zoomeye.org/searchResult?q=%2Fiptv%2Flive%2Fzh_cn.js%20%2Bcountry%3A%22CN%22%20%2Bsubdivisions%3A%22hubei%22",    #湖北
     "https://www.zoomeye.org/searchResult?q=%2Fiptv%2Flive%2Fzh_cn.js%20%2Bcountry%3A%22CN%22%20%2Bsubdivisions%3A%22hunan%22"    #湖南
     ]
+def download_file():
+    """
+    Downloads a file from the given URL and saves it to the specified file name.
+
+    Args:
+        url (str): The URL of the file to download.
+        fmm_file (str): The name of the file to save the downloaded file to.
+
+    Returns:
+        None
+    """
+    fmm_url = 'https://live.fanmingming.com/tv/m3u/ipv6.m3u'
+    fmm_file = 'FMM.m3u'
+    wget.download(fmm_url, fmm_file)
+
+def write_fh():
+    src_file = "./FMM.m3u"
+    dest_file = "./fh.txt"
+    results = []
+    with open(src_file, 'r') as srcf:
+        line = srcf.readline()
+        while line:
+            line = srcf.readline()
+            if "第一财经" in line or "东方财经" in line or "求索" in line:
+                channel_name = line.split(",")[1].replace("\n","")
+                channel_url = next(srcf)
+                results.append((channel_name, channel_url))
+
+    with open(dest_file, 'w', encoding='utf-8') as destf:
+        for line in results:
+            channel_name, channel_url = line
+            destf.write(f"{channel_name},{channel_url}")
 
 def modify_urls(url):
     modified_urls = []
@@ -221,8 +254,8 @@ for url in urls:
 channels = []
 favorate = ['CCTV','财经','凤凰','香港','TVB','民视','中视','莲花','纪实']
 for result in results:
-    line = result.strip()
-    if result:
+    #line = result.strip()
+    if "CCTV" in result or "财经" in result or "凤凰" in result or "香港" in result or "TVB" in result:
         channel_name, channel_url = result.split(',')
         channels.append((channel_name, channel_url))
 
@@ -251,22 +284,22 @@ def get_stream_resolution(m3u_url):
 
     # 从输出中解析分辨率信息
     output = result.stderr.decode('utf-8')
-    for line in output.split('\n'):
-        if 'Video: ' in line:
-            #print(line)
-            match = re.search(r'(h\d+|h\w+|vp9|mpeg).* (\d+)x(\d+)', line)
-            #print(match)
-            if match:
-                code = match.group(1)
-                width = match.group(2)
-                height = match.group(3)
-                if 'hevc' not in code and '1920' in width:
-                    resolution = f"{code}-{width}x{height}"
-                else:
-                    resolution = None
-                #print(f"Resolution: {code}-{width}x{height}")
-            else:
-                    resolution = None
+    # for line in output.split('\n'):
+    #     if 'Video: ' in line:
+    #         #print(line)
+    match = re.search(r'Stream #0:0: Video: (h\d+|h\w+|vp9|mpeg).*(\d{4})x(\d{4})', output,re.DOTALL)
+    #print(match)
+    if match:
+        code = match.group(1)
+        width = match.group(2)
+        height = match.group(3)
+        if 'hevc' not in code and '1920' in width:
+            resolution = f"{code}-{width}x{height}"
+        else:
+            resolution = None
+        #print(f"Resolution: {code}-{width}x{height}")
+    else:
+        resolution = None
     return resolution
 
 # 定义工作线程函数
@@ -301,23 +334,23 @@ def worker():
                 ts_url = channel_url_t + ts_lists[0]  # 拼接单个视频片段下载链接
                 if normalized_speed >= 0.3:
                     #if file_size >= 12000000:
-                    if 'CCTV' in channel_name:
-                        resolution = get_stream_resolution(channel_url)
-                        if resolution:
-                            result = channel_name, channel_url, resolution, f"{normalized_speed:.3f} MB/s"
-                            results.append(result)
-                            numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                            print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
-                        else:
-                            error_channel = channel_name, channel_url
-                            error_channels.append(error_channel)
-                            numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                            print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} , 网速：{normalized_speed:.3f} MB/s , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
-                    else:
+                    #if 'CCTV' in channel_name:
+                    resolution = get_stream_resolution(channel_url)
+                    if resolution:
                         result = channel_name, channel_url, resolution, f"{normalized_speed:.3f} MB/s"
                         results.append(result)
                         numberx = (len(results) + len(error_channels)) / len(channels) * 100
-                        print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")    
+                        print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    else:
+                        error_channel = channel_name, channel_url
+                        error_channels.append(error_channel)
+                        numberx = (len(results) + len(error_channels)) / len(channels) * 100
+                        print(f"可用频道：{len(results)} 个 , 不可用频道：{len(error_channels)} , 网速：{normalized_speed:.3f} MB/s , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")
+                    # else:
+                    #     result = channel_name, channel_url, resolution, f"{normalized_speed:.3f} MB/s"
+                    #     results.append(result)
+                    #     numberx = (len(results) + len(error_channels)) / len(channels) * 100
+                    #     print(f"可用频道：{len(results)} , 网速：{normalized_speed:.3f} MB/s , 不可用频道：{len(error_channels)} 个 , 总频道：{len(channels)} 个 ,总进度：{numberx:.2f} %。")    
                 else:
                     error_channel = channel_name, channel_url
                     error_channels.append(error_channel)
@@ -394,20 +427,20 @@ with open("itvlist.txt", 'w', encoding='utf-8') as file:
             else:
                 file.write(f"{channel_name},{channel_url}\n")
                 channel_counters[channel_name] = 1
-    channel_counters = {}
-    file.write('卫视频道,#genre#\n')
-    for result in results:
-        channel_name, channel_url, resolution, speed = result
-        if '卫视' in channel_name:
-            if channel_name in channel_counters:
-                if channel_counters[channel_name] >= result_counter:
-                    continue
-                else:
-                    file.write(f"{channel_name},{channel_url}\n")
-                    channel_counters[channel_name] += 1
-            else:
-                file.write(f"{channel_name},{channel_url}\n")
-                channel_counters[channel_name] = 1
+    # channel_counters = {}
+    # file.write('卫视频道,#genre#\n')
+    # for result in results:
+    #     channel_name, channel_url, resolution, speed = result
+    #     if '卫视' in channel_name:
+    #         if channel_name in channel_counters:
+    #             if channel_counters[channel_name] >= result_counter:
+    #                 continue
+    #             else:
+    #                 file.write(f"{channel_name},{channel_url}\n")
+    #                 channel_counters[channel_name] += 1
+    #         else:
+    #             file.write(f"{channel_name},{channel_url}\n")
+    #             channel_counters[channel_name] = 1
     channel_counters = {}
     file.write('其他频道,#genre#\n')
     for result in results:
@@ -422,6 +455,14 @@ with open("itvlist.txt", 'w', encoding='utf-8') as file:
             else:
                 file.write(f"{channel_name},{channel_url}\n")
                 channel_counters[channel_name] = 1
+
+download_file()
+write_fh()
+# 从fh.txt中读取收藏频道，并追加到itvlist.m3u中
+fh_channels = []
+with open("fh.txt","r") as fh:
+    for line in fh:
+        fh_channels.append(line.strip())
 
 with open("itvlist.m3u", 'w', encoding='utf-8') as file:
     channel_counters = {}
@@ -440,6 +481,8 @@ with open("itvlist.m3u", 'w', encoding='utf-8') as file:
                 file.write(f"#EXTINF:-1 group-title=\"收藏频道\",{channel_name}\n")
                 file.write(f"{channel_url}\n")
                 channel_counters[channel_name] = 1
-            
-    
+    for channel in fh_channels:
+        fh_channel_name,fh_channel_url = channel.split(',')
+        file.write(f"#EXTINF:-1 group-title=\"收藏频道\", {fh_channel_name}\n")
+        file.write(f"{fh_channel_url}\n")       
 
