@@ -65,6 +65,8 @@ def download_file():
     """
     fmm_url = 'https://live.fanmingming.com/tv/m3u/ipv6.m3u'
     fmm_file = 'FMM.m3u'
+    if os.path.exists(fmm_file):
+        os.remove(fmm_file)
     wget.download(fmm_url, fmm_file)
 
 def write_fh():
@@ -119,7 +121,7 @@ for url in urls:
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_driver_path="/home/frank/bin/chromedriver"
+    chrome_driver_path="/opt/google/chrome/chromedriver"
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(options=chrome_options,service=service)
     # 使用WebDriver访问网页
