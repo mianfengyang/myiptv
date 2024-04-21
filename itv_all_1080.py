@@ -65,9 +65,9 @@ def process_fmm():
         line = srcf.readline()
         while line:
             line = srcf.readline()
-            if "财经" in line or "求索" in line or "凤凰" in line:
+            if "第一财经" in line or "求索" in line or "凤凰" in line:
                 channel_name = line.split(",")[1].replace("\n","")
-                channel_url = next(srcf)
+                channel_url = next(srcf).replace("\n", "")
                 fh_channels.append((channel_name, channel_url))
 
 def modify_urls(url):
