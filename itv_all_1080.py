@@ -52,40 +52,23 @@ urls = [
     "https://www.zoomeye.org/searchResult?q=%2Fiptv%2Flive%2Fzh_cn.js%20%2Bcountry%3A%22CN%22%20%2Bsubdivisions%3A%22hubei%22",    #湖北
     "https://www.zoomeye.org/searchResult?q=%2Fiptv%2Flive%2Fzh_cn.js%20%2Bcountry%3A%22CN%22%20%2Bsubdivisions%3A%22hunan%22"    #湖南
     ]
-def download_file():
-    """
-    Downloads a file from the given URL and saves it to the specified file name.
-
-    Args:
-        url (str): The URL of the file to download.
-        fmm_file (str): The name of the file to save the downloaded file to.
-
-    Returns:
-        None
-    """
-    fmm_url = 'https://live.fanmingming.com/tv/m3u/ipv6.m3u'
-    fmm_file = 'FMM.m3u'
+fh_channels = []
+def process_fmm():
+    fmm_url = "https://live.fanmingming.com/tv/m3u/ipv6.m3u"
+    fmm_file = "FMM.m3u"
     if os.path.exists(fmm_file):
         os.remove(fmm_file)
     wget.download(fmm_url, fmm_file)
 
-def write_fh():
-    src_file = "./FMM.m3u"
-    dest_file = "./fh.txt"
-    results = []
-    with open(src_file, 'r') as srcf:
+    dest_file = "fh.txt"
+    with open(fmm_file, 'r') as srcf:
         line = srcf.readline()
         while line:
             line = srcf.readline()
-            if "第一财经" in line or "东方财经" in line or "求索" in line:
+            if "财经" in line or "求索" in line or "凤凰" in line:
                 channel_name = line.split(",")[1].replace("\n","")
                 channel_url = next(srcf)
-                results.append((channel_name, channel_url))
-
-    with open(dest_file, 'w', encoding='utf-8') as destf:
-        for line in results:
-            channel_name, channel_url = line
-            destf.write(f"{channel_name},{channel_url}")
+                fh_channels.append((channel_name, channel_url))
 
 def modify_urls(url):
     modified_urls = []
@@ -254,7 +237,6 @@ for url in urls:
 
 
 channels = []
-favorate = ['CCTV','财经','凤凰','香港','TVB','民视','中视','莲花','纪实']
 for result in results:
     #line = result.strip()
     if "CCTV" in result or "财经" in result or "凤凰" in result or "香港" in result or "TVB" in result:
@@ -375,7 +357,7 @@ def worker():
 
 
 # 创建多个工作线程
-num_threads = 16
+num_threads = 10
 for _ in range(num_threads):
     t = threading.Thread(target=worker, daemon=True)  # 将工作线程设置为守护线程
     t.start()
@@ -410,7 +392,7 @@ with open("itv_speed.txt", 'w', encoding='utf-8') as file:
         channel_name, channel_url, resolution, speed = result
         file.write(f"{channel_name},{channel_url}\n")
 
-
+process_fmm()
 #result_counter = 8  # 每个频道需要的个数
 result_counter = 1 # 每个频道需要的个数
 
@@ -458,14 +440,6 @@ with open("itvlist.txt", 'w', encoding='utf-8') as file:
                 file.write(f"{channel_name},{channel_url}\n")
                 channel_counters[channel_name] = 1
 
-download_file()
-write_fh()
-# 从fh.txt中读取收藏频道，并追加到itvlist.m3u中
-fh_channels = []
-with open("fh.txt","r") as fh:
-    for line in fh:
-        fh_channels.append(line.strip())
-
 with open("itvlist.m3u", 'w', encoding='utf-8') as file:
     channel_counters = {}
     file.write('#EXTM3U\n')
@@ -484,7 +458,7 @@ with open("itvlist.m3u", 'w', encoding='utf-8') as file:
                 file.write(f"{channel_url}\n")
                 channel_counters[channel_name] = 1
     for channel in fh_channels:
-        fh_channel_name,fh_channel_url = channel.split(',')
+        fh_channel_name,fh_channel_url = channel
         file.write(f"#EXTINF:-1 group-title=\"收藏频道\", {fh_channel_name}\n")
         file.write(f"{fh_channel_url}\n")       
 
